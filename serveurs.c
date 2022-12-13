@@ -115,7 +115,7 @@ int main(int argc, char ** argv, char ** envp){
             //tab->tpe[i] = 0;
             sleep(1);
            
-            printf("Commande prête !\n");
+            
         }else if(rep.attente == 0 ){
             /* envoie d'un message au cuisiniers */
             printf("Envoi ordre à un cuisinier...\n");

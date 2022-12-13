@@ -106,7 +106,7 @@ int main(int argc, char ** argv, char ** envp){
         /* Fin section critique                   */
         /* Liberation semaphore                   */
         
-        printf("Commande prête !\n");
+        printf("(%d) Commande prête !\n", rep.client);
         mg.attente = 1;
         mg.type = 1;
         mg.commande = rep.commande;
