@@ -30,11 +30,11 @@ void arret(int s){
     fprintf(stdout,"Serveur s'arrete (SIGINT recu)\n");
     couleur(BLEU);
     /* Affichage du chiffre d'affaire réalisé */
-    printf("Chiffre d'affaire : %ld\n", tab->chiffreAffaire);
+    printf("Chiffre d'affaire : %ld€\n", tab->chiffreAffaire);
     /*Affichage des prix de chaque spécialités */
     int p;
     for(p=0;p<tab->nb_spec;p++){
-        printf("Prix spécialité %d : %d\n", p+1, tab->tab[p][tab->nb_categorie+1]);
+        printf("Prix spécialité %d : %d€\n", p+1, tab->tab[p][tab->nb_categorie+1]);
     }
     couleur(REINIT);
 
@@ -72,7 +72,7 @@ int main(int argc, char ** argv, char ** envp){
     int tabPid[30];
     memset(tabPid, 0, sizeof(int)*30);
     srand(time(NULL));
-    if(argc < 5)
+    if(argc < 6)
         usage(argv[0]);
     int nb_serveurs, nb_cuisiniers, nb_terms, nb_spec, i;
     int ustensile[MAX_USTENSILE];

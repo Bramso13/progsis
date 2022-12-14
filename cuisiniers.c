@@ -99,7 +99,7 @@ int main(int argc, char ** argv, char ** envp){
     int j;
     while(1){
         /* attente de la reponse :                        */
-        printf("(cuisine) En attente de la réponse...\n");
+        printf("(cuisine) En attente de boulot...\n");
         res_rcv = msgrcv(file_mess,&rep,sizeof(struct message),2,0);
         if (res_rcv ==-1){
             fprintf(stderr,"Erreur, numero %d\n",errno);

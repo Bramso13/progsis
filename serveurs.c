@@ -154,6 +154,7 @@ int main(int argc, char ** argv, char ** envp){
             printf("(serveur %d) Paiement reçu.\n", nb_ordre);
             couleur(REINIT);
             nbCommandeF++;
+            printf("(serveur %d) Fin reservation tpe.\n", nb_ordre);
             tab->tpe[p] = 0;
             tab->chiffreAffaire = tab->chiffreAffaire + tab->tab[rep.commande][tab->nb_categorie+1];
             
