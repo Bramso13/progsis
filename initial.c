@@ -27,8 +27,17 @@ void usage(char s[]){
 }
 void arret(int s){
     couleur(ROUGE);
-    fprintf(stdout,"Serveur s'arrete (sigusr1 recu)\n");
+    fprintf(stdout,"Serveur s'arrete (SIGINT recu)\n");
+    couleur(BLEU);
+    /* Affichage du chiffre d'affaire réalisé */
+    printf("Chiffre d'affaire : %ld\n", tab->chiffreAffaire);
+    /*Affichage des prix de chaque spécialités */
+    int p;
+    for(p=0;p<tab->nb_spec;p++){
+        printf("Prix spécialité %d : %d\n", p+1, tab->tab[p][tab->nb_categorie+1]);
+    }
     couleur(REINIT);
+
     shmdt(tab);
 
     /* Destruction SMP */
@@ -59,7 +68,7 @@ int main(int argc, char ** argv, char ** envp){
     char chi[1024];       /* pour fabriquer les argv des fils    */
     unsigned short val_init[1]={1};
                           /* valeur initiale du semaphore        */
-    struct message msg;
+
     int tabPid[30];
     memset(tabPid, 0, sizeof(int)*30);
     srand(time(NULL));
@@ -145,6 +154,7 @@ int main(int argc, char ** argv, char ** envp){
     /* Tout est OK, on initialise :                          */
     tab->nb_categorie = argc - 5;
     tab->nb_spec = nb_spec;
+    tab->chiffreAffaire = 0;
     memset(tab->tpe, 0, sizeof(int)*nb_terms);
     tab->nb_tpe = nb_terms;
     int j, k;
@@ -154,10 +164,11 @@ int main(int argc, char ** argv, char ** envp){
             tab->ustensile[k] = ustensile[k];
             printf("%d ", tab->tab[j][k]);
         }
+        tab->tab[j][tab->nb_categorie+1] = rand()%(15) + 5; /* Prix */
         printf("\n");
     }
     mon_sigaction(SIGINT,arret);
-
+    /* Lancement des serveurs */
     printf("Lancement des serveurs\n");
     for(i=0;i<nb_serveurs;i++){
         fprintf(stderr,".");
@@ -177,8 +188,8 @@ int main(int argc, char ** argv, char ** envp){
     }
     fprintf(stderr,"fait\n");
     sleep(3);
-    char argD[1024];
-    char argT[1024];
+    char argD[1024]; /* argv[1] de cuisiniers*/
+    char argT[1024]; /* argv[2] de cuisiniers*/
     printf("Lancement des cuisiniers\n");
     for(i=0;i<nb_cuisiniers;i++){
         fprintf(stderr,".");
@@ -199,10 +210,10 @@ int main(int argc, char ** argv, char ** envp){
         tabPidCuis[i] = pid;
     }
     fprintf(stderr,"fait\n");
-     sleep(3);
-
+    sleep(3);
+    /* Boucle infini des clients */
     while(1){
-        /* On lance les fils :                                */
+        /* On lance les clients :                                */
         fprintf(stderr,"Lancement des clients");
         int pifo = rand()%20 + 1;
         memset(tabPid, 0, sizeof(int)*21);
@@ -226,7 +237,7 @@ int main(int argc, char ** argv, char ** envp){
         fprintf(stderr,"fait\n");
         sleep(5);
 
-        int e, t=0;
+        int t=0;
         
         /* On les attend :                            */
         
@@ -238,18 +249,20 @@ int main(int argc, char ** argv, char ** envp){
             else{
                 t++;
                 fprintf(stderr,".");
-                if(t == pifo) {
+                if(t == pifo) { /* On attends que chaque client soit bien fini */
                     encore = 0;
                     t=0;
                 }
-                }
+            }
 
         fprintf(stderr," c'est fini.\n");
 
-        /* On nettoie :                               */
-        /* Detachement SMP */
+       
+        
         sleep(1);
     }
+    /* On nettoie :                               */
+    /* Detachement SMP */
     shmdt(tab);
 
     /* Destruction SMP */
@@ -262,26 +275,4 @@ int main(int argc, char ** argv, char ** envp){
 
     return 0;
 
-    /*
-    printf("Envoie du premier message...\n");
-        msg.attente = 1;
-        msg.type = 3;
-        msg.commande = 0;
-        msg.monid = pid;
-        e = msgsnd(file_mess, &msg, sizeof(struct message), 0);
-        if(e == -1){
-            fprintf(stderr,"Erreur, numero %d\n",errno);
-            exit(-1);
-        }
-        sleep(10);
-        printf("Envoie du deuxieme message...\n");
-        msg.attente = 2;
-        msg.type = 3;
-        msg.commande = 200;
-        msg.monid = pid;
-        e = msgsnd(file_mess, &msg, sizeof(struct message), 0);
-        if(e == -1){
-            fprintf(stderr,"Erreur, numero %d\n",errno);
-            exit(-1);
-        }*/
 }

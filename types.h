@@ -32,6 +32,7 @@ struct data{
     int ustensile[100];
     int tpe[100];
     int nb_tpe;
+    long chiffreAffaire;
 };
 
 /* Couleurs dans xterm */

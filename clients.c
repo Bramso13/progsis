@@ -14,6 +14,19 @@ void usage(){
     printf("probleme param client\n");
     exit(-1);
 }
+void arret(int s){
+
+    exit(0);
+}
+
+void mon_sigaction(int signal, void (*f)(int)){
+    struct sigaction action;
+ 
+    action.sa_handler = f;
+    sigemptyset(&action.sa_mask);
+    action.sa_flags = 0;
+    sigaction(signal,&action,NULL);
+}
 
 int main(int argc, char ** argv, char ** envp){
     key_t cle; /* cle de la file     */
@@ -26,7 +39,7 @@ int main(int argc, char ** argv, char ** envp){
     
     pid = getpid();
 
-
+    srand(time(NULL));
     if(argc < 2) usage();
     int nb_spec = atoi(argv[1]);
     int pif = rand()%(nb_spec-1) +1;
@@ -49,7 +62,7 @@ int main(int argc, char ** argv, char ** envp){
         fprintf(stderr,"Pb recuperation file de message\n");
         exit(-1);
     }
-
+    mon_sigaction(SIGINT, arret);
     mg.attente = 0;
     mg.type = 1;
     mg.commande = pif;
@@ -62,34 +75,45 @@ int main(int argc, char ** argv, char ** envp){
     }
 
     /* attente de la reponse :                        */
-    printf("(client) En attente de la réponse...\n");
+    printf("(client %d) En attente de la réponse...\n", pid);
     res_rcv = msgrcv(file_mess,&rep,sizeof(struct message),pid,0);
     if (res_rcv ==-1){
         fprintf(stderr,"Erreur, numero %d\n",errno);
         exit(-1);
     }
     /* attente de l'attribution du serveur le moins occupé */
-    printf("Réponse : %d %d %ld %d %d\n", rep.attente, rep.commande, rep.type, rep.client, pid);
-    printf("(%d) Attente de l'attribution du serveur le moins occupé...\n", pid);
+
+    printf("(client %d) Attente de l'attribution du serveur le moins occupé...\n", pid);
     res_rcv = msgrcv(file_mess,&rep,sizeof(struct message),pid,0);
     if (res_rcv ==-1){
         fprintf(stderr,"Erreur, numero %d\n",errno);
         exit(-1);
     }
     sleep(1);
-    printf("(%d) Attribution d'un serveur effectuée.\n", pid);
-    printf("Réponse : %d %d %ld %d %d\n", rep.attente, rep.commande, rep.type, rep.client, pid);
+    printf("(client %d) Attribution d'un serveur effectuée.\n", pid);
+
     /* attente de la fabrication de la commande */
-    printf("(%d) En attente de la commande...\n", pid);
+    printf("(client %d) En attente de la commande...\n", pid);
     res_rcv = msgrcv(file_mess,&rep,sizeof(struct message),pid,0);
     if (res_rcv ==-1){
         fprintf(stderr,"Erreur, numero %d\n",errno);
         exit(-1);
     }
     couleur(BLEU);
-    printf("(%d) Commande reçu.\n", pid);
+    printf("(client %d) Commande reçu.\n", pid);
     couleur(REINIT);
-    printf("Réponse : %d %d %ld %d %d\n", rep.attente, rep.commande, rep.type, rep.client, pid);
+    printf("(client %d) Paiement en cours.\n", pid);
+    mg.attente = 0;
+    mg.type = rep.monid;
+    mg.commande = pif;
+    mg.client = pid;
+    mg.monid = pid;
+    e = msgsnd(file_mess, &mg, sizeof(struct message), 0);
+    if(e == -1){
+        fprintf(stderr,"Erreur, numero %d\n",errno);
+        exit(-1);
+    }
+
     
     
     /* Fin normale                                */
