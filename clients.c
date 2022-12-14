@@ -75,7 +75,7 @@ int main(int argc, char ** argv, char ** envp){
     }
 
     /* attente de la reponse :                        */
-    printf("(client %d) En attente de la réponse...\n", pid);
+    printf("(client %d) Attente de l'attribution du serveur le moins occupé...\n", pid);
     res_rcv = msgrcv(file_mess,&rep,sizeof(struct message),pid,0);
     if (res_rcv ==-1){
         fprintf(stderr,"Erreur, numero %d\n",errno);
@@ -83,14 +83,14 @@ int main(int argc, char ** argv, char ** envp){
     }
     /* attente de l'attribution du serveur le moins occupé */
 
-    printf("(client %d) Attente de l'attribution du serveur le moins occupé...\n", pid);
+    printf("(client %d) Attribution d'un serveur effectuée.\n", pid);
     res_rcv = msgrcv(file_mess,&rep,sizeof(struct message),pid,0);
     if (res_rcv ==-1){
         fprintf(stderr,"Erreur, numero %d\n",errno);
         exit(-1);
     }
     sleep(1);
-    printf("(client %d) Attribution d'un serveur effectuée.\n", pid);
+
 
     /* attente de la fabrication de la commande */
     printf("(client %d) En attente de la commande...\n", pid);
