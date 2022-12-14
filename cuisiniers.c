@@ -52,7 +52,7 @@ int main(int argc, char ** argv, char ** envp){
     struct sembuf P = {0,-1,IPC_NOWAIT}; /* Operation P        */
     struct sembuf V = {0,1,IPC_NOWAIT};  /* Operation V        */
 
-    int nb_spec = atoi(argv[2]);
+    //int nb_spec = atoi(argv[2]);
     int nb_cat = atoi(argv[3]);
     nb_ordre = atoi(argv[1]);
 

@@ -162,10 +162,10 @@ int main(int argc, char ** argv, char ** envp){
         for(k=0;k<argc-5;k++){
             tab->tab[j][k] = rand()%(ustensile[k]);
             tab->ustensile[k] = ustensile[k];
-            printf("%d ", tab->tab[j][k]);
+
         }
         tab->tab[j][tab->nb_categorie+1] = rand()%(15) + 5; /* Prix */
-        printf("\n");
+
     }
     mon_sigaction(SIGINT,arret);
     /* Lancement des serveurs */

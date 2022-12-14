@@ -149,12 +149,14 @@ int main(int argc, char ** argv, char ** envp){
                 fprintf(stderr,"Erreur, numero %d\n",errno);
                 exit(-1);
             }
+           
             couleur(ROUGE);
             printf("(serveur %d) Paiement reçu.\n", nb_ordre);
             couleur(REINIT);
             nbCommandeF++;
             tab->tpe[p] = 0;
             tab->chiffreAffaire = tab->chiffreAffaire + tab->tab[rep.commande][tab->nb_categorie+1];
+            
             sleep(1);
            
             
